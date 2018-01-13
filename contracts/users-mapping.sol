@@ -24,6 +24,10 @@ contract Users {
         return userAddresses;
     }
 
+    function getUsersCount() public constant returns (uint) {
+        return userAddresses.length;
+    }
+
     function getUser() public constant returns (string, uint) {
         return (users[msg.sender].fName, users[msg.sender].age);
     }

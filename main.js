@@ -27,6 +27,23 @@ var ABI = [
         "type": "function"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "name": "age",
+                "type": "uint256"
+            }
+        ],
+        "name": "User",
+        "type": "event"
+    },
+    {
         "constant": false,
         "inputs": [
             {
@@ -48,18 +65,26 @@ var ABI = [
 
 var myContract = web3.eth.contract(ABI);
 
-var myContractAdress = '0xd71db06ed9a821e08173c548f28f075937690ab0';
+var myContractAdress = '0x61e5ad257a5131fe2bffa19e98cabe8c08ad73b4';
 var deployedContract = myContract.at(myContractAdress);
 
 console.log(deployedContract);
 
-deployedContract.getUser(function(err, result) {
+var userEvent = deployedContract.User();
+userEvent.watch(function (err, result) {
     if (err) {
         console.error(err.message);
     } else {
-        document.getElementById('instructor').innerHTML = result[0] + ' ' + result[1];
+        document.getElementById('instructor').innerHTML = result.args.name + ' ' + result.args.age;
     }
 });
+// deployedContract.getUser(function(err, result) {
+//     if (err) {
+//         console.error(err.message);
+//     } else {
+//         document.getElementById('instructor').innerHTML = result[0] + ' ' + result[1];
+//     }
+// });
 
 var nameInput = document.querySelector('#name');
 var ageInput = document.querySelector('#age');
@@ -67,5 +92,4 @@ var button = document.querySelector('#button');
 
 button.addEventListener('click', function () {
     deployedContract.setUser(nameInput.value, ageInput.value);
-    window.location.reload();
 });

@@ -60,12 +60,18 @@ var ABI = [
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
     }
 ];
 
 var myContract = web3.eth.contract(ABI);
 
-var myContractAdress = '0x61e5ad257a5131fe2bffa19e98cabe8c08ad73b4';
+var myContractAdress = '0x626b81a1f433b70d7a09a2762a1fe136710135c6';
 var deployedContract = myContract.at(myContractAdress);
 
 console.log(deployedContract);

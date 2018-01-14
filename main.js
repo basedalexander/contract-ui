@@ -5,97 +5,140 @@ if (typeof web3 !== 'undefined') {
     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
-web3.eth.defaultAccount = web3.eth.accounts[0];
+web3.eth.defaultAccount = web3.eth.accounts[1];
 
-var ABI = [
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "getUser",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            },
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "name": "name",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "name": "age",
-                "type": "uint256"
-            }
-        ],
-        "name": "User",
-        "type": "event"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_userName",
-                "type": "string"
-            },
-            {
-                "name": "_userAge",
-                "type": "uint256"
-            }
-        ],
-        "name": "setUser",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    }
-];
+var ABI =
+    [
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "getUsersCount",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "getUsers",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address[]"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "pk",
+                    "type": "address"
+                }
+            ],
+            "name": "getUser",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "getMe",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "name": "age",
+                    "type": "uint256"
+                }
+            ],
+            "name": "UserInfo",
+            "type": "event"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "fName",
+                    "type": "string"
+                },
+                {
+                    "name": "age",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setUser",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ];
 
 var myContract = web3.eth.contract(ABI);
 
-var myContractAdress = '0x626b81a1f433b70d7a09a2762a1fe136710135c6';
+var myContractAdress = '0x36a265f8dd2b7f7a3aa51df98b39882f89de26a3';
 var deployedContract = myContract.at(myContractAdress);
 
-console.log(deployedContract);
-
-var userEvent = deployedContract.User();
+var userEvent = deployedContract.UserInfo();
 userEvent.watch(function (err, result) {
     if (err) {
         console.error(err.message);
     } else {
-        document.getElementById('instructor').innerHTML = result.args.name + ' ' + result.args.age;
+        document.getElementById('instructor').innerHTML = result.args.name + ' (' + result.args.age + ' years old )';
     }
 });
-// deployedContract.getUser(function(err, result) {
-//     if (err) {
-//         console.error(err.message);
-//     } else {
-//         document.getElementById('instructor').innerHTML = result[0] + ' ' + result[1];
-//     }
-// });
 
 var nameInput = document.querySelector('#name');
 var ageInput = document.querySelector('#age');
 var button = document.querySelector('#button');
 
 button.addEventListener('click', function () {
-    deployedContract.setUser(nameInput.value, ageInput.value);
+    deployedContract.setUser(nameInput.value, ageInput.value, function (err, result) {
+        if (err) {
+            throw new Error(err);
+        } else {
+            console.log('sucess user has been set');
+        }
+    });
 });

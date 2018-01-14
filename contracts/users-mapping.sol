@@ -2,22 +2,29 @@ pragma solidity ^0.4.18;
 
 contract Users {
     struct User {
-        string fName;
-        string lName;
+        string name;
         uint age;
     }
 
     mapping(address => User) users;
     address[] userAddresses;
 
-    function registerUser(string _fName, string _lName, uint _age) public {
+    event UserInfo(string name, uint age);
+
+    function setUser(string fName, uint age) public {
         var newUser = users[msg.sender];
 
-        newUser.fName = _fName;
-        newUser.lName = _lName;
-        newUser.age = _age;
+        if (newUser.age != 0) {
+            UserInfo(newUser.name, newUser.age);
+            return;
+        }
+
+        newUser.name = fName;
+        newUser.age = age;
 
         userAddresses.push(msg.sender);
+
+        UserInfo(newUser.name, newUser.age);
     }
 
     function getUsers() public constant returns (address[]) {
@@ -28,8 +35,11 @@ contract Users {
         return userAddresses.length;
     }
 
-    function getUser() public constant returns (string, uint) {
-        return (users[msg.sender].fName, users[msg.sender].age);
+    function getMe() public constant returns (string, uint) {
+        return (users[msg.sender].name, users[msg.sender].age);
     }
 
+    function getUser(address pk) public constant returns (string, uint) {
+        return (users[pk].name, users[pk].age);
+    }
 }

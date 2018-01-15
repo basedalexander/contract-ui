@@ -7,12 +7,12 @@ contract TrefaToken is ERC20 {
 
     using SafeMath for uint256;
 
-    uint256 public _totalSupply = 0;
+    uint256 public _totalSupply = 1000;
 
     string public constant symbol = "TRF";
     string public constant name = "Trefa Token";
     uint8 public constant decimals = 18;
-    uint256 public constant RATE = 300;
+    uint256 public constant RATE = 10;
 
     address public owner;
 
@@ -22,6 +22,7 @@ contract TrefaToken is ERC20 {
 
     function TrefaToken() public {
         owner = msg.sender;
+        balances[owner] = _totalSupply;
     }
 
     function createTokens() public payable {

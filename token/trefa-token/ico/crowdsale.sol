@@ -12,10 +12,10 @@ contract Crowdsale is Ownable {
     using SafeMath for uint256;
 
     Token token;
-    uint256 public constant RATE = 300;
+    uint256 public constant RATE = 100;
     uint256 public constant CAP = 10;
     uint256 public constant START = 1516035600;
-    uint256 public constant DAYS = 1;
+    uint256 public constant DAYS = 2;
     bool public initialized = false;
     uint256 public raisedAmount = 0;
 
@@ -30,7 +30,7 @@ contract Crowdsale is Ownable {
         initialized = true;
     }
 
-    // fallback functioin, ether is send directly to contract's address
+    // fallback function, ether is send directly to contract's address
     function () payable {
         buyTokens();
     }

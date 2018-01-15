@@ -30,8 +30,28 @@ contract Crowdsale is Ownable {
         initialized = true;
     }
 
+    // fallback functioin, ether is send directly to contract's address
+    function () payable {
+        buyTokens();
+    }
+
+    function buyTokens() payable whenSaleIsActive {
+        require(msg.value > 0);
+
+        uint256 weiAmount = msg.value;
+        uint256 tokensAmount = weiAmount.mul(RATE);
+
+        BoughtToken(msg.sender, tokensAmount);
+
+        raisedAmount = raisedAmount.add(weiAmount);
+
+        token.transfer(msg.sender, tokens);
+
+        owner.transfer(msg.value);
+    }
+
     modifier whenSaleIsActive() {
-        assert(isActive()); // what's the diff between require(); ?
+        assert(isActive()); // TODO what's the diff between require(); ?
 
         _;
     }
@@ -51,6 +71,16 @@ contract Crowdsale is Ownable {
 
     function tokensAvailable() constant returns (uint256) {
         return token.balanceOf(this); // <-- "this" refers to Crowdsale contract address once it's been deployed;
+    }
+
+    // Terminate contract and refund to owner
+    function destroy() onlyOwner {
+        uint256 balance = token.balanceOf(this);
+        assert(balance > 0);
+        token.transfer(owner, balance);
+
+        // There should be no ether in the contract but just in case
+        selfdestruct(owner);
     }
 
     event BoughtTokens(address indexed to, uint256 value);
